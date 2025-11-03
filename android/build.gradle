@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 
 android {
     namespace 'de.kevlatus.flutter_broadcasts'
-    compileSdkVersion 31
+    compileSdkVersion 34
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'

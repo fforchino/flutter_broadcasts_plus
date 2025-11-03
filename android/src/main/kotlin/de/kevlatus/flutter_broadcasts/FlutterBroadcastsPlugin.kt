@@ -13,6 +13,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import java.io.Serializable
+import android.os.Build
 
 class CustomBroadcastReceiver(
         val id: Int,
@@ -45,13 +46,22 @@ class CustomBroadcastReceiver(
         }
     }
 
-    fun start(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            context.registerReceiver(this, intentFilter, Context.RECEIVER_EXPORTED)
-        } else {
-            context.registerReceiver(this, intentFilter)
-        }
+    fun start(context: android.content.Context) {
         Log.d(TAG, "starting to listen for broadcasts: " + names.joinToString(";"))
+        try {
+            if (Build.VERSION.SDK_INT >= 33) {
+                context.registerReceiver(
+                    this,
+                    intentFilter,
+                    Context.RECEIVER_EXPORTED
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                context.registerReceiver(this, intentFilter)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to register receiver: ${e.message}", e)
+        }
     }
 
     fun stop(context: Context) {
